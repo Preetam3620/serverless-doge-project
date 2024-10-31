@@ -1,0 +1,40 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: sjsuuni
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: doge-meme-generator
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: doge-project
+
+provider:
+  name: aws
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:PutObjectAcl
+          Resource: "arn:aws:s3:::bucket-doge/*"
+  runtime: nodejs20.x
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      - httpApi:
+          path: /
+          method: get
+
+  create:
+    handler: handler.create
+    events:
+      - http:
+          path: create
+          method: post
+
+resources:
+  Resources:
+    MemeBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: bucket-doge
